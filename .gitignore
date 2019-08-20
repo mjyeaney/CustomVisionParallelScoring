@@ -4,3 +4,5 @@ lib
 lib64
 share
 samples
+log.txt
+*.log
