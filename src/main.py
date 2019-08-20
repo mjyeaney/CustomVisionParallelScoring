@@ -9,6 +9,14 @@ LOG_FORMAT="%(name)s - %(levelname)s - %(message)s"
 logging.basicConfig(level=logging.INFO)
 # logging.basicConfig(filename=LOG_FILE_NAME, filemode=LOG_FILE_MODE, format=LOG_FORMAT, level=logging.INFO)
 
+def writeImageFile(image, writePath):
+    try:
+        logging.info(f"Writing tile at: {writePath}")
+        image.save(writePath, compress_level=0)
+    except:
+        logging.error(f"Error while writing {writePath}")
+        pass
+
 def tileSourceImage(sourceImagePath, outputPath, tileHeight, tileWidth):
     k = 1
     im = Image.open(sourceImagePath)
@@ -18,15 +26,17 @@ def tileSourceImage(sourceImagePath, outputPath, tileHeight, tileWidth):
     for i in range(0, imgheight, tileHeight):
         for j in range(0, imgwidth, tileWidth):
             box = (j, i, j + tileWidth, i + tileHeight)
-            a = im.crop(box)
+            cropped = im.crop(box)
             writePath = os.path.join(outputPath, f"tile-{k}.png")
+            writeImageFile(cropped, writePath)
 
-            try:
-                logging.info(f"Writing tile at: {writePath}")
-                a.save(writePath, compress_level=0)
-            except:
-                logging.error(f"Error while writing {writePath}")
-                pass
+            cropped_r90 = cropped.rotate(90, expand=True)
+            writePath = os.path.join(outputPath, f"tile-{k}-r90.png")
+            writeImageFile(cropped_r90, writePath)
+
+            cropped_r180 = cropped.rotate(180)
+            writePath = os.path.join(outputPath, f"tile-{k}-r180.png")
+            writeImageFile(cropped_r180, writePath)
 
             k +=1
 
