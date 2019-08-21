@@ -1,7 +1,7 @@
 import argparse
 import logging
 import glob, os
-import ImageTiler, TileScoring, BoundingBox
+import ImageTiler, TileScoring, BoundingBox, FinalImageWriter
 
 LOG_FILE_NAME="log.txt"
 LOG_FILE_MODE="w"
@@ -33,14 +33,16 @@ def main():
     tiler = ImageTiler.ImageTiler()
     scoring = TileScoring.TileScoring();
     boundingBox = BoundingBox.BoundingBox();
+    finalImageWriter = FinalImageWriter.FinalImageWriter()
     tiler.WriteTiles(args.sourceImage, args.tileOutputPath, args.tileHeight, args.tileWidth, args.train)
 
     # 2. Call the model API endpoint
     if args.score:
         # Let's think through how this may get used from the end-user point of view...
         # Some different decisions here once we get solid model performance
-        scores = scoring.ScoreTiles(args.tileOutputPath);
-        boxes = boundingBox.CombineBoundingBoxes(scores);
+        scores = scoring.ScoreTiles(args.tileOutputPath)
+        boxes = boundingBox.CombineBoundingBoxes(scores)
+        finalImageWriter.WriteFinalImage(args.sourceImage, boxes)
 
 if __name__=='__main__':
     main()
