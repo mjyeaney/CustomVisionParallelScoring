@@ -29,14 +29,16 @@ def main():
     logging.info(f"tileHeight = {args.tileHeight}" )
     logging.info(f"tileWidth = {args.tileWidth}" )    
 
-    # 1. Tile the input image
+    # Applicaiton services
     tiler = ImageTiler.ImageTiler()
     scoring = TileScoring.TileScoring();
     boundingBox = BoundingBox.BoundingBox();
     finalImageWriter = FinalImageWriter.FinalImageWriter()
+
+    # Tile the input image
     tiler.WriteTiles(args.sourceImage, args.tileOutputPath, args.tileHeight, args.tileWidth, args.train)
 
-    # 2. Call the model API endpoint
+    # Call the model API endpoint
     if args.score:
         # Let's think through how this may get used from the end-user point of view...
         # Some different decisions here once we get solid model performance
