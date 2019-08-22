@@ -7,7 +7,7 @@ LOG_FILE_NAME="log.txt"
 LOG_FILE_MODE="w"
 LOG_FORMAT="%(name)s - %(levelname)s - %(message)s"
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(format=LOG_FORMAT, level=logging.INFO)
 # logging.basicConfig(filename=LOG_FILE_NAME, filemode=LOG_FILE_MODE, format=LOG_FORMAT, level=logging.INFO)
 
 def main():
