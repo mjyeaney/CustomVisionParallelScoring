@@ -21,8 +21,8 @@ def main():
     group.add_argument("-s", "--score", help="If present, tiles the source image and scores against the Custom Vision API, generating a final image with object identification rectangles overlayed.", action="store_true")
     parser.add_argument("sourceImage", help="The path to the source image to create tiles from.", type=str)
     parser.add_argument("tileOutputPath", help="The output path to save the tiles to.", type=str)
-    parser.add_argument("tileHeight", help="The height (in pixels) of each output tile", type=int)
     parser.add_argument("tileWidth", help="The width (in pixels) of each output tile", type=int)
+    parser.add_argument("tileHeight", help="The height (in pixels) of each output tile", type=int)
     args = parser.parse_args()
 
     logging.info("Starting tiling utility with the following arguments:")
@@ -30,8 +30,8 @@ def main():
     logging.info(f"score = {args.score}")
     logging.info(f"sourceImage = {args.sourceImage}")
     logging.info(f"tileOutputPath = {args.tileOutputPath}" )
-    logging.info(f"tileHeight = {args.tileHeight}" )
-    logging.info(f"tileWidth = {args.tileWidth}" )    
+    logging.info(f"tileWidth = {args.tileWidth}" ) 
+    logging.info(f"tileHeight = {args.tileHeight}" )   
 
     # Applicaiton services
     tiler = DefaultImageTiler()
