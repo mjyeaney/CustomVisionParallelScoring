@@ -1,7 +1,11 @@
 import argparse
 import logging
 import glob, os
-import ImageTiler, TileScoring, BoundingBox, FinalImageWriter
+
+from ImageTiling import DefaultImageTiler
+from TileScoring import ParallelApiMethods
+from BoundingBoxes import CoordinateOperations
+from ResultsWriter import ImageWithBoundingBoxes
 
 LOG_FILE_NAME="log.txt"
 LOG_FILE_MODE="w"
@@ -30,10 +34,10 @@ def main():
     logging.info(f"tileWidth = {args.tileWidth}" )    
 
     # Applicaiton services
-    tiler = ImageTiler.ImageTiler()
-    scoring = TileScoring.TileScoring();
-    boundingBox = BoundingBox.BoundingBox();
-    finalImageWriter = FinalImageWriter.FinalImageWriter()
+    tiler = DefaultImageTiler()
+    scoring = ParallelApiMethods();
+    boundingBoxMethods = CoordinateOperations();
+    finalImageWriter = ImageWithBoundingBoxes()
 
     # Tile the input image
     tiler.WriteTiles(args.sourceImage, args.tileOutputPath, args.tileHeight, args.tileWidth, args.train)
@@ -43,8 +47,8 @@ def main():
         # Let's think through how this may get used from the end-user point of view...
         # Some different decisions here once we get solid model performance
         scores = scoring.ScoreTiles(args.tileOutputPath)
-        boxes = boundingBox.CombineBoundingBoxes(scores)
-        finalImageWriter.WriteFinalImage(args.sourceImage, boxes)
+        boxes = boundingBoxMethods.CombineBoundingBoxes(scores)
+        finalImageWriter.Write(args.sourceImage, boxes)
 
 if __name__=='__main__':
     main()

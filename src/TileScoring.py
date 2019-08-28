@@ -9,7 +9,7 @@ from tornado import gen, httpclient, ioloop, queues
 base_url = "http://www.tornadoweb.org/en/stable/"
 concurrency = 5
 
-class TileScoring:
+class ParallelApiMethods:
 
     tiles = []
 

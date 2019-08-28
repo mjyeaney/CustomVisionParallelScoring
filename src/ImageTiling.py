@@ -1,7 +1,7 @@
 import os, logging
 from PIL import Image, ImageFilter
 
-class ImageTiler:
+class DefaultImageTiler:
     def __writeImageFile(self, image, writePath):
         try:
             logging.info(f"Writing tile: {writePath}")
