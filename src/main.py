@@ -43,9 +43,9 @@ def main():
 
     # Applicaiton services
     tiler = DefaultImageTiler()
-    scoring = ParallelApiMethods();
-    boundingBoxMethods = CoordinateOperations();
-    finalImageWriter = ImageWithBoundingBoxes()
+    scoringApi = ParallelApiMethods()
+    coordinateOps = CoordinateOperations()
+    resultsWriter = ImageWithBoundingBoxes()
 
     # Tile the input image
     tiler.WriteTiles(args.sourceImage, args.tileOutputPath, args.tileHeight, args.tileWidth, args.train)
@@ -53,9 +53,9 @@ def main():
     # Call the model API endpoint
     if args.score:
         # Run the scoring workflow
-        scores = scoring.ScoreTiles(args.tileOutputPath)
-        boxes = boundingBoxMethods.CombineBoundingBoxes(scores)
-        finalImageWriter.Write(args.sourceImage, boxes, args.outputImagePath)
+        scores = scoringApi.ScoreTiles(args.tileOutputPath)
+        boxes = coordinateOps.RemapBoundingBoxes(scores)
+        resultsWriter.Write(args.sourceImage, boxes, args.outputImagePath)
 
 if __name__=='__main__':
     main()

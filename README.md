@@ -6,7 +6,7 @@ In order to work around these current limitations, a sample project will be deve
 
 This approach should work with both classification and object detection methods, making the code reusable for a variety of scenarios.
 
-## Basic Approach
+## Design Approach
 
 The concept that is leveraged in this repo is the idea of _image segmentation_, where an image is segmented into multiple, smaller parts each of which is a uniformly sized part of the larger, source image. Using this idea of segementing, features which may be obscured within the original high-resolution image are augmented withinn the individual tiles since the relative size of the feature is now much larger (compared to the tile size). This augmentation allows easier identification within the model, yielding higher accuracy for features which would normally be much too small:
 

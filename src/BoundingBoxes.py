@@ -1,16 +1,27 @@
 import logging
 
 class CoordinateOperations:
-    def CombineBoundingBoxes(self, results):
+    def RemapBoundingBoxes(self, results):
+        """
+        This method re-maps all bounding boxes found to the global space within the original source 
+        image.
+        """
         # Here, results is a list of results from our Custom Vision API. 
         # For each box found:
-             # Translate box coords to R2 using TranslateR4toR2
-             # Add box to output list
+            # Translate box coords to R2 using TranslateR4toR2
+            # Add box to output list
         
             # Return output list
         pass
     
     def TranslateR4toR2(self, tile_width, tile_height, tile_col, tile_row, r4_x, r4_y):
+        """
+        This method essentially translates bounding boxes from "tile space" to "source image space". 
+        We do this by recognizing that tile space is essentially R4, where each coordinate is not only defined 
+        by a _local_ X and Y, but also a tile X and Y (which is row and column). Given a known number of rows and columns, 
+        along with tile size, we can perform these translations.
+        """
+
         # Validate range of params is correct
         if (tile_width < 0): 
             msg = f"Specified tile width {tile_width} cannot be negative";

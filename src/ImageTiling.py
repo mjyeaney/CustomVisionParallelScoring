@@ -22,6 +22,11 @@ class DefaultImageTiler:
             raise Exception(msg)
 
     def WriteTiles(self, sourceImagePath, outputPath, tileHeight, tileWidth, generatePermutations):
+        """
+        Breaks a source image into smaller tiles, defined by the h/w passed in by caller. Tiles are written to an
+        intermediate location on disk storage, and used later by other modules.
+        """
+
         k = 1
         im = Image.open(sourceImagePath)
         imgwidth, imgheight = im.size
