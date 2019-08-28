@@ -3,6 +3,11 @@ import logging
 class CoordinateOperations:
     def CombineBoundingBoxes(self, results):
         # Here, results is a list of results from our Custom Vision API. 
+        # For each box found:
+             # Translate box coords to R2 using TranslateR4toR2
+             # Add box to output list
+        
+            # Return output list
         pass
     
     def TranslateR4toR2(self, tile_width, tile_height, tile_col, tile_row, r4_x, r4_y):

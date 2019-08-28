@@ -30,17 +30,17 @@ Note, however, that we now have bounding box information that is relative only t
 
 To create a set of training tiles, the basic use will be:
 
-`python src/main.py -t path_to_source_image path_for_tile_output tile_width tile_height`
+`python src/main.py -t --sourceImage xxx --tileOutputPath xxx --tileWidth xxx --tileHeight xxx`
 
-So, for example, to tile a source image named `test-image.jpg`, save the tiles at `./tiles`, and have each tile be 800x600, use the following:
+So, for example, to tile a source image named `test-image.jpg`, save the tiles at `./tiles`, and have each tile be 800x600, use the following (note the `-t` flag):
 
-`python src/main.py -t test-image.jpg ./tiles 800 600`
+`python src/main.py -t --sourceImage test-image.jpg --tileOutputPath tiles/ --tileWidth 800 --tileHeight 600`
 
-To run scoring against a source image, the usage is:
+To run scoring against a source image, the usage is (note the `-s` flag):
 
-`python src/main.py -s path_to_source_image path_for_tile_output tile_width tile_height path_to_final_output`
+`python src/main.py -s --sourceImage xxx --tileOutputPath xxx --tileWidth xxx --tileHeight xxx --outputImagePath xxx`
 
-This will write the final output image to the path defined by `path_to_final_output`.
+This will write the final output image to the path defined by the `--outputImagePath` parameter.
 
 ## Logging
 
