@@ -10,11 +10,15 @@ This approach should work with both classification and object detection methods,
 
 The concept that is leveraged in this repo is the idea of _image segmentation_, where an image is segmented into multiple, smaller parts each of which is a uniformly sized part of the larger, source image. Using this idea of segementing, features which may be obscured within the original high-resolution image are augmented withinn the individual tiles since the relative size of the feature is now much larger (compared to the tile size). This augmentation allows easier identification within the model, yielding higher accuracy for features which would normally be much too small:
 
-![Image Segmentation Example](docs/segmentation-example-1.png)
+<p align="center"> 
+    <img src="docs/segmentation-example-1.png">
+</p>
 
 In addition, the individual tiles are also duplicated and modified (via rotation about a center origin point) in order to provide additional training images. Each tile is rotated 3 times (90, 180, and 270 degrees) in order to give 4 training images per tile (counting the original):
 
-![Image rotation example](docs/rotation-example-1.png)
+<p align="center"> 
+    <img src="docs/rotation-example-1.png">
+</p>
 
 Once the images are segmented, they can be used to build a Custom Vision model using the process outlined at [3]. Optionally, we could also automate the upload and training steps, assuming we have defect coordinates apriori to running the utilities.
 
