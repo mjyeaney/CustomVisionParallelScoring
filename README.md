@@ -26,6 +26,12 @@ Regardless of the method used to build the model, the final step will be to leve
 
 Note, however, that we now have bounding box information that is relative only to a *single tile*. The final steps is to re-map these coordinates (effectively from R<sup>4</sup> space to R<sup>2</sup> space) so we can "re-map" the boxes back onto the original source image. Once this is done, we can draw these re-mapped boxes onto the source image for display.
 
+## Installation & Setup
+
+The source tree should ideally be run from within a virtualenv/venv in order to preserve local installations. `Pip` requirements can be found in the `requirements.txt` file using the following: 
+
+`pip install -r requirements.txt`
+
 ## Usage
 
 To create a set of training tiles, the basic use will be:

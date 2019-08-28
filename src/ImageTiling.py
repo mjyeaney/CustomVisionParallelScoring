@@ -42,11 +42,13 @@ class DefaultImageTiler:
                 
                 # Crop image, change colorspace, etc.
                 cropped = im.crop(box)
+
+                # Few other options to test: B&W and Edge enhanced
                 # cropped = cropped.convert(mode="L") # B&w...does it help?
                 # cropped = cropped.filter(ImageFilter.EDGE_ENHANCE) # Edge enhance
 
                 # Write tile images
-                writePath = os.path.join(outputPath, f"tile-{k}.png")
+                writePath = os.path.join(outputPath, f"tile_{k}.png")
                 self.__writeImageFile(cropped, writePath)            
 
                 # Generate permutations if required (3 per original image, yielding 4 samples per tile)
@@ -55,12 +57,13 @@ class DefaultImageTiler:
                     cropped_r180 = cropped.rotate(180)
                     cropped_r270 = cropped.rotate(270, expand=True)
 
-                    writePath = os.path.join(outputPath, f"tile-{k}-r90.png")
+                    writePath = os.path.join(outputPath, f"tile_{k}_r90.png")
                     self.__writeImageFile(cropped_r90, writePath)
-                    writePath = os.path.join(outputPath, f"tile-{k}-r180.png")
+                    writePath = os.path.join(outputPath, f"tile_{k}_r180.png")
                     self.__writeImageFile(cropped_r180, writePath)
-                    writePath = os.path.join(outputPath, f"tile-{k}-r270.png")
+                    writePath = os.path.join(outputPath, f"tile_{k}_r270.png")
                     self.__writeImageFile(cropped_r270, writePath)
-
+                
+                # Increment tile counter
                 k +=1
     
