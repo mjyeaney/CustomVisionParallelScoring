@@ -1,7 +1,7 @@
 import logging
 
 class CoordinateOperations:
-    def RemapBoundingBoxes(self, boundingBoxes):
+    def RemapBoundingBoxes(self, scores):
         """
         This method re-maps all bounding boxes found to the global space within the original source 
         image.
@@ -10,7 +10,7 @@ class CoordinateOperations:
         results = []
 
         # Here, results is a list of results from our Custom Vision API. 
-        for box in boundingBoxes:
+        for box in scores:
             # Translate box coords to R2 using TranslateR4toR2
             # TODO: Where do tile sizes and row/col come from????
             x, y = self.TranslateR4toR2(500, 500, X, X, box.x_1, box.y_1)

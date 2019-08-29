@@ -3,7 +3,7 @@ import logging
 import glob, os
 
 from ImageTiling import DefaultImageTiler
-from ModelScoringApi import ParallelScoringMethod
+from ModelScoringApi import ParallelScoringMethod, MockScoringMethod
 from BoundingBoxes import CoordinateOperations
 from ResultsWriter import ImageWithBoundingBoxes
 
@@ -72,7 +72,7 @@ def main():
 
     # Applicaiton services
     tiler = DefaultImageTiler()
-    scoringApi = ParallelScoringMethod()
+    scoringApi = MockScoringMethod() #ParallelScoringMethod()
     coordinateOps = CoordinateOperations()
     resultsWriter = ImageWithBoundingBoxes()
 

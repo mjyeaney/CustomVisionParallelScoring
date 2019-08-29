@@ -1,6 +1,7 @@
 import logging, os
 import glob
 import time
+import random
 
 from datetime import timedelta
 from html.parser import HTMLParser
@@ -9,6 +10,36 @@ from tornado import gen, httpclient, ioloop, queues
 
 base_url = "http://www.tornadoweb.org/en/stable/"
 concurrency = 5
+
+class MockScoringMethod:
+    """
+    Fake scoring API, returns a canned result for testing
+    """
+    def ScoreTiles(self, tileDirectory):
+        """
+        Reads the tiles from the specified directory, and creates some canned results to test end-to-end drawing
+        """
+
+        self.tiles = glob.glob(os.path.join(tileDirectory, "*.png"))
+        logging.info(f"Found {len(self.tiles)} tiles for scoring...")
+        
+        scores = []
+
+        for tile in self.tiles:
+            ## Create a "fake" result, but this data structure 
+            ## will be our contract to downstream systems (pull this into a class?)
+            scores.append({
+                "name": tile,
+                "score": random.random(),
+                "tileRow": 0,
+                "tileColumn": 0,
+                "boxes": [
+                    (100, 100, 200, 200),
+                    (300, 300, 400, 400)
+                ]
+            })
+        
+        return scores
 
 class ParallelScoringMethod:
     """
