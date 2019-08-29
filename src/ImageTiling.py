@@ -2,6 +2,11 @@ import os, logging
 from PIL import Image, ImageFilter
 
 class DefaultImageTiler:
+    """
+    Basic image tiling support. Breaks down the source image into a number of tiles each of which 
+    has a defined size. Tiles MUST evenly divide the width and height of the source image.
+    """
+
     def __writeImageFile(self, image, writePath):
         try:
             logging.info(f"Writing tile: {writePath}")
@@ -21,7 +26,7 @@ class DefaultImageTiler:
             logging.error(msg)
             raise Exception(msg)
 
-    def WriteTiles(self, sourceImagePath, outputPath, tileHeight, tileWidth, generatePermutations):
+    def CreateTiles(self, sourceImagePath, outputPath, tileHeight, tileWidth, generatePermutations):
         """
         Breaks a source image into smaller tiles, defined by the h/w passed in by caller. Tiles are written to an
         intermediate location on disk storage, and used later by other modules.

@@ -77,7 +77,7 @@ def main():
     resultsWriter = ImageWithBoundingBoxes()
 
     # Tile the input image
-    tiler.WriteTiles(
+    tiler.CreateTiles(
         args.sourceImage, 
         args.tileOutputPath, 
         args.tileHeight, 
@@ -85,9 +85,8 @@ def main():
         args.train
     )
 
-    # Call the model API endpoint
-    if args.score:
-        # Run the scoring workflow
+    # If scoring, run the scoring workflow
+    if args.score:        
         scores = scoringApi.ScoreTiles(args.tileOutputPath)
         boxes = coordinateOps.RemapBoundingBoxes(scores)
         resultsWriter.Write(args.sourceImage, boxes, args.outputImagePath)

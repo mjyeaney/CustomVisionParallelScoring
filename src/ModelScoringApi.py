@@ -11,6 +11,9 @@ base_url = "http://www.tornadoweb.org/en/stable/"
 concurrency = 5
 
 class ParallelScoringMethod:
+    """
+    Implements scoring calls against the Custom Vision API in a parallel manner.
+    """
 
     tiles = []
 
@@ -58,6 +61,10 @@ class ParallelScoringMethod:
         await workers
 
     def ScoreTiles(self, tileDirectory):
+        """
+        Reads the tiles from the specified directory, and sends those to the scoring API endpoint in parallel.
+        """
+
         self.tiles = glob.glob(os.path.join(tileDirectory, "*.png"))
         logging.info(f"Found {len(self.tiles)} tiles for scoring...")
 

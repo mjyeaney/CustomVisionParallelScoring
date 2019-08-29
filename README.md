@@ -1,4 +1,4 @@
-# Custom Vision Parallel Scoring
+# Custom Vision Parallel Scoring Utility
   
 The Azure [Custom Vision service][1] today has [limits][2] on the size of images used for training and scoring. These limits can present challenges to applications which produce high-resolution images as is commonly found in modern high-definition cameras.
 
@@ -28,9 +28,11 @@ Note, however, that we now have bounding box information that is relative only t
 
 ## Installation & Setup
 
-The source tree should ideally be run from within a virtualenv/venv in order to preserve local installations. `Pip` requirements can be found in the `requirements.txt` file using the following: 
+This project was developed / tested using Python 3.6.8 along with Pylint3 1.8.3 from a virtual environment created using `venv` ([more info here][4]). `Pip` requirements can be found in the `requirements.txt` file using the following: 
 
 `pip install -r requirements.txt`
+
+Following successful installation, unit tests can be run using the `run-tests.sh` script to verify correct operation.
 
 ## Usage
 
@@ -52,8 +54,12 @@ This will write the final output image to the path defined by the `--outputImage
 
 All modules currenly log using the standard Python `logging` module, allowing output to be captured to files, console output, etc. Additional settings and/or output methods may be delivered in later builds.
 
+## Feedback / Issues
+
+Please feel free to submit issues and feedback in this repo - pull requests also accepted.
 
 
 [1]: https://docs.microsoft.com/en-us/azure/cognitive-services/custom-vision-service/home
 [2]: https://docs.microsoft.com/en-us/azure/cognitive-services/custom-vision-service/limits-and-quotas
 [3]: https://docs.microsoft.com/en-us/azure/cognitive-services/custom-vision-service/get-started-build-detector 
+[4]: https://docs.python.org/3.6/library/venv.html

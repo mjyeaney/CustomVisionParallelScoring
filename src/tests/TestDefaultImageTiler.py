@@ -13,16 +13,16 @@ class TestImageTiler(unittest.TestCase):
     def test_tileSize_validation(self):
         tiler = DefaultImageTiler()
         with self.assertRaises(Exception):
-            tiler.WriteTiles("./samples/test-1.jpg", "./samples/tiles", 670, 670, False)
+            tiler.CreateTiles("./samples/test-1.jpg", "./samples/tiles", 670, 670, False)
     
     def test_tiling_basics(self):
         tiler = DefaultImageTiler();
-        tiler.WriteTiles("./samples/test-1.jpg", "./samples/tiles", 600, 800, False)
+        tiler.CreateTiles("./samples/test-1.jpg", "./samples/tiles", 600, 800, False)
         self.assertEqual(len(glob.glob("./samples/tiles/*.png")), 25)
 
     def test_tiling_permutations(self):
         tiler = DefaultImageTiler();
-        tiler.WriteTiles("./samples/test-1.jpg", "./samples/tiles", 600, 800, True)
+        tiler.CreateTiles("./samples/test-1.jpg", "./samples/tiles", 600, 800, True)
         self.assertEqual(len(glob.glob("./samples/tiles/*.png")), 100)
 
     def tearDown(self):
