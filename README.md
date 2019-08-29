@@ -1,6 +1,6 @@
 # Custom Vision Parallel Scoring
   
-The Azure Custom Vision service [1] today has limits [2] on the size of images used for training and scoring. These limits can present challenges to applications which produce high-resolution images as is commonly found in modern high-definition cameras.
+The Azure [Custom Vision service][1] today has [limits][2] on the size of images used for training and scoring. These limits can present challenges to applications which produce high-resolution images as is commonly found in modern high-definition cameras.
 
 In order to work around these current limitations, a sample project will be developed that will demonstrate an approach that breaks down single, high-resolution images into smaller pieces and leverages those to train on and run predictions against. Once scored, the code will re-assemble these individual results back into a single image buffer and combine any object detection bounding boxes.
 
@@ -20,7 +20,7 @@ In addition, the individual tiles are also duplicated and modified (via rotation
     <img src="docs/rotation-example-1.png">
 </p>
 
-Once the images are segmented, they can be used to build a Custom Vision model using the process outlined at [3]. Optionally, we could also automate the upload and training steps, assuming we have defect coordinates apriori to running the utilities.
+Once the images are segmented, they can be used to build a Custom Vision model using the process outlined [here][3]. Optionally, we could also automate the upload and training steps, assuming we have defect coordinates apriori to running the utilities.
 
 Regardless of the method used to build the model, the final step will be to leverage the scoring API of the model in order to identify/classify a source image. The process of scoring an original source images begines much the same way as outlined above, where the source image is segmented into smaller tiles. Each of these tiles is then submitted (in parallel) to the Custom Vision scoring API endpoint, which returns classification and/or object identification bounding box details.
 
@@ -52,8 +52,8 @@ This will write the final output image to the path defined by the `--outputImage
 
 All modules currenly log using the standard Python `logging` module, allowing output to be captured to files, console output, etc. Additional settings and/or output methods may be delivered in later builds.
 
-# References & Links
 
-- [1]: “Custom Vision Service”, https://docs.microsoft.com/en-us/azure/cognitive-services/custom-vision-service/home
-- [2]: “Limits and Quotas”, https://docs.microsoft.com/en-us/azure/cognitive-services/custom-vision-service/limits-and-quotas
-- [3]: "Build an object detector (Using the web portal)", https://docs.microsoft.com/en-us/azure/cognitive-services/custom-vision-service/get-started-build-detector 
+
+[1]: https://docs.microsoft.com/en-us/azure/cognitive-services/custom-vision-service/home
+[2]: https://docs.microsoft.com/en-us/azure/cognitive-services/custom-vision-service/limits-and-quotas
+[3]: https://docs.microsoft.com/en-us/azure/cognitive-services/custom-vision-service/get-started-build-detector 
