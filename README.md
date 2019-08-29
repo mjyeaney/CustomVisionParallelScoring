@@ -8,7 +8,7 @@ This approach should work with both classification and object detection methods,
 
 ## Design Approach
 
-The concept that is leveraged in this repo is the idea of _image segmentation_, where an image is segmented into multiple, smaller parts each of which is a uniformly sized part of the larger, source image. Using this idea of segementing, features which may be obscured within the original high-resolution image are augmented withinn the individual tiles since the relative size of the feature is now much larger (compared to the tile size). This augmentation allows easier identification within the model, yielding higher accuracy for features which would normally be much too small:
+The concept that is leveraged in this repo is the idea of _image segmentation_, where an image is segmented into multiple, smaller parts each of which is a uniformly sized part of the larger, high-resolution source image. Using this idea of segementing, features which may be obscured within the original high-resolution image are thereby augmented within the individual tiles since the relative size of the feature is now much larger (compared to the tile size) - specifically, feature augmentation follows linearly as the number of tiles increases. This augmentation allows easier identification within the model, yielding higher accuracy for features which would normally be much too small:
 
 <p align="center"> 
     <img src="docs/segmentation-example-1.png">
@@ -54,6 +54,6 @@ All modules currenly log using the standard Python `logging` module, allowing ou
 
 # References & Links
 
-* [1]: “Custom Vision Service”, https://docs.microsoft.com/en-us/azure/cognitive-services/custom-vision-service/home
-* [2]: “Limits and Quotas”, https://docs.microsoft.com/en-us/azure/cognitive-services/custom-vision-service/limits-and-quotas
-* [3]: "Build an object detector (Using the web portal)", https://docs.microsoft.com/en-us/azure/cognitive-services/custom-vision-service/get-started-build-detector 
+- [1]: “Custom Vision Service”, https://docs.microsoft.com/en-us/azure/cognitive-services/custom-vision-service/home
+- [2]: “Limits and Quotas”, https://docs.microsoft.com/en-us/azure/cognitive-services/custom-vision-service/limits-and-quotas
+- [3]: "Build an object detector (Using the web portal)", https://docs.microsoft.com/en-us/azure/cognitive-services/custom-vision-service/get-started-build-detector 
