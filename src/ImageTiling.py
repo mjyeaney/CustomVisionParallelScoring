@@ -43,6 +43,8 @@ class DefaultImageTiler:
         """
 
         k = 1
+        tileRow = 0
+        tileCol = 0
         im = Image.open(sourceImagePath)
         imgwidth, imgheight = im.size
         logging.info(f"Source image info: width={imgwidth}, height={imgheight}, mode={im.mode}")
@@ -62,9 +64,8 @@ class DefaultImageTiler:
                 # cropped = cropped.convert(mode="L") # B&w...does it help?
                 # cropped = cropped.filter(ImageFilter.EDGE_ENHANCE) # Edge enhance
 
-                # Write tile images
-                # Note we're encoding tiling infomration into the filenames
-                writePath = os.path.join(outputPath, f"tile_{k}_{i}_{j}_0.png")
+                # Write tile images - note we're encoding tiling infomration into the filenames
+                writePath = os.path.join(outputPath, f"tile_{k}_{tileRow}_{tileCol}_0.png")
                 self.__writeImageFile(cropped, writePath)            
 
                 # Generate permutations if required (3 per original image, yielding 4 samples per tile)
@@ -73,13 +74,16 @@ class DefaultImageTiler:
                     cropped_r180 = cropped.rotate(180)
                     cropped_r270 = cropped.rotate(270, expand=True)
 
-                    writePath = os.path.join(outputPath, f"tile_{k}_{i}_{j}_90.png")
+                    writePath = os.path.join(outputPath, f"tile_{k}_{tileRow}_{tileCol}_90.png")
                     self.__writeImageFile(cropped_r90, writePath)
-                    writePath = os.path.join(outputPath, f"tile_{k}_{i}_{j}_180.png")
+                    writePath = os.path.join(outputPath, f"tile_{k}_{tileRow}_{tileCol}_180.png")
                     self.__writeImageFile(cropped_r180, writePath)
-                    writePath = os.path.join(outputPath, f"tile_{k}_{i}_{j}_270.png")
+                    writePath = os.path.join(outputPath, f"tile_{k}_{tileRow}_{tileCol}_270.png")
                     self.__writeImageFile(cropped_r270, writePath)
                 
-                # Increment tile counter
+                # Increment counters
                 k +=1
+                tileCol += 1
+            
+            tileRow += 1
     

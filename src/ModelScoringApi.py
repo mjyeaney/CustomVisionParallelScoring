@@ -37,8 +37,8 @@ class MockScoringMethod:
                 "tileRow": int(tileRow),
                 "tileColumn": int(tileCol),
                 "boxes": [
-                    (100, 100, 200, 200),
-                    (300, 300, 400, 400)
+                    (100.0, 100.0, 200.0, 200.0),
+                    (300.0, 300.0, 350.0, 500.0)
                 ]
             })
         

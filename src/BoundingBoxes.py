@@ -19,12 +19,12 @@ class CoordinateOperations:
 
                 # Translate box coords to R2 using TranslateR4toR2
                 x, y = self.TranslateR4toR2(
-                    int(tileWidth), 
-                    int(tileHeight), 
+                    tileWidth, 
+                    tileHeight, 
                     int(tileCol), 
                     int(tileRow), 
-                    float(x1), 
-                    float(y1)
+                    x1, 
+                    y1
                 )
                 width = x2 - x1
                 height = y2 - y1
