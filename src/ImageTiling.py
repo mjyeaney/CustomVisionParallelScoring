@@ -1,4 +1,4 @@
-import os, logging
+import os, glob, logging
 from PIL import Image, ImageFilter
 
 class DefaultImageTiler:
@@ -25,6 +25,16 @@ class DefaultImageTiler:
             msg = f"Specified tile width {tileWidth} does not evenly divide source image {sourceWidth}.";
             logging.error(msg)
             raise Exception(msg)
+    
+    def Cleanup(self, tilePath):
+        """
+        Cleans up temporary tile images that were created.
+        """
+        logging.info("Removing tiles...")
+        filesToRemove = glob.glob(os.path.join(tilePath, "*.png"))
+        logging.info(f"Found {len(filesToRemove)} tiles...")
+        for f in filesToRemove:
+            os.remove(f)
 
     def CreateTiles(self, sourceImagePath, outputPath, tileHeight, tileWidth, generatePermutations):
         """
@@ -53,6 +63,7 @@ class DefaultImageTiler:
                 # cropped = cropped.filter(ImageFilter.EDGE_ENHANCE) # Edge enhance
 
                 # Write tile images
+                # Note we're encoding tiling infomration into the filenames
                 writePath = os.path.join(outputPath, f"tile_{k}_{i}_{j}_0.png")
                 self.__writeImageFile(cropped, writePath)            
 

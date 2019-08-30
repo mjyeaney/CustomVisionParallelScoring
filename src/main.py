@@ -88,8 +88,12 @@ def main():
     # If scoring, run the scoring workflow
     if args.score:        
         scores = scoringApi.ScoreTiles(args.tileOutputPath)
-        boxes = coordinateOps.RemapBoundingBoxes(scores)
-        resultsWriter.Write(args.sourceImage, boxes, args.outputImagePath)
+        boxes = coordinateOps.RemapBoundingBoxes(args.tileHeight, args.tileWidth, scores)
+        resultFileName = os.path.join(args.outputImagePath, os.path.basename(args.sourceImage))
+        resultsWriter.Write(args.sourceImage, boxes, resultFileName)
+    
+    # Cleanup
+    tiler.Cleanup(args.tileOutputPath)
 
 if __name__=='__main__':
     main()

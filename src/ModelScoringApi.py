@@ -25,17 +25,17 @@ class MockScoringMethod:
         
         scores = []
 
-        # Given a file name of tile_{index}_{rotationAngle}.png, parse out the name into pices
-        _, index, tileRow, tileCol, angle = name.split('.')[0].split('_')
-
         for tile in self.tiles:
+            # Given a file name of tile_{index}_{rotationAngle}.png, parse out the name into pices
+            _, index, tileRow, tileCol, angle = tile.split('.')[0].split('_')
+
             ## Create a "fake" result, but this data structure 
             ## will be our contract to downstream systems (pull this into a class?)
             scores.append({
                 "name": tile,
                 "score": random.random(),
-                "tileRow": tileRow,
-                "tileColumn": tileCol,
+                "tileRow": int(tileRow),
+                "tileColumn": int(tileCol),
                 "boxes": [
                     (100, 100, 200, 200),
                     (300, 300, 400, 400)
