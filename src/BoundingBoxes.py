@@ -1,18 +1,42 @@
 import logging
 
 class CoordinateOperations:
-    def RemapBoundingBoxes(self, results):
+    def RemapBoundingBoxes(self, tileHeight, tileWidth, scores):
         """
         This method re-maps all bounding boxes found to the global space within the original source 
         image.
         """
-        # Here, results is a list of results from our Custom Vision API. 
-        # For each box found:
-            # Translate box coords to R2 using TranslateR4toR2
-            # Add box to output list
+        # Start with an empty array
+        results = []
+
+        # Here, socres is a list of results from our scoring API. 
+        for score in scores:
+            # Each score contains a list of boxes
+            for box in score["boxes"]:
+                # Given a file name of tile_{index}_{rotationAngle}.png, parse out the name into pices
+                _, index, tileRow, tileCol, angle = score["name"].split('.')[0].split('_')
+                x1, y1, x2, y2 = box
+
+                logging.info(f"Mapping box {x1},{y1},{x2},{y2} in row {tileRow}, col {tileCol}...")
+
+                # Translate box coords to R2 using TranslateR4toR2
+                x, y = self.TranslateR4toR2(
+                    tileWidth, 
+                    tileHeight, 
+                    int(tileCol), 
+                    int(tileRow), 
+                    x1, 
+                    y1
+                )
+                width = x2 - x1
+                height = y2 - y1
+
+                logging.info(f"New coordinates: {x}, {y} with width = {width} and height = {height}")
+
+                # Add box to output list
+                results.append((x, y, x + width, y + height))
         
-            # Return output list
-        pass
+        return results
     
     def TranslateR4toR2(self, tile_width, tile_height, tile_col, tile_row, r4_x, r4_y):
         """
