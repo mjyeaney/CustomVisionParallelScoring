@@ -33,7 +33,7 @@ def main():
         type=str
     )
     parser.add_argument(
-        "--tileOutputPath", 
+        "--tilePath", 
         help="The output path to save the tiles to.", 
         type=str
     )
@@ -48,7 +48,7 @@ def main():
         type=int
     )
     parser.add_argument(
-        "--outputImagePath", 
+        "--outputPath", 
         help="The path to write the final output image to when scoring (using the '-s' or '--score' flags)", 
         type=str, 
         default=""
@@ -59,16 +59,16 @@ def main():
     logging.info(f"train = {args.train}")
     logging.info(f"score = {args.score}")
     logging.info(f"sourceImage = {args.sourceImage}")
-    logging.info(f"tileOutputPath = {args.tileOutputPath}")
+    logging.info(f"tilePath = {args.tilePath}")
     logging.info(f"tileWidth = {args.tileWidth}") 
     logging.info(f"tileHeight = {args.tileHeight}")
-    logging.info(f"outputImagePath = {args.outputImagePath}") 
+    logging.info(f"outputPath = {args.outputPath}") 
 
     # Quick validation check
     if args.score:
         # Make sure we have the final output path available
-        if args.outputImagePath == "":
-            raise Exception("Missing '--outputImagePath' argument!!!")
+        if args.outputPath == "":
+            raise Exception("Missing '--outputPath' argument!!!")
 
     # Applicaiton services
     tiler = DefaultImageTiler()
@@ -79,7 +79,7 @@ def main():
     # Tile the input image
     tiler.CreateTiles(
         args.sourceImage, 
-        args.tileOutputPath, 
+        args.tilePath, 
         args.tileHeight, 
         args.tileWidth, 
         args.train
@@ -87,13 +87,13 @@ def main():
 
     # If scoring, run the scoring workflow
     if args.score:        
-        scores = scoringApi.ScoreTiles(args.tileOutputPath)
+        scores = scoringApi.ScoreTiles(args.tilePath)
         boxes = coordinateOps.RemapBoundingBoxes(args.tileHeight, args.tileWidth, scores)
-        resultFileName = os.path.join(args.outputImagePath, os.path.basename(args.sourceImage))
+        resultFileName = os.path.join(args.outputPath, os.path.basename(args.sourceImage))
         resultsWriter.Write(args.sourceImage, boxes, resultFileName)
     
     # Cleanup
-    tiler.Cleanup(args.tileOutputPath)
+    tiler.Cleanup(args.tilePath)
 
 if __name__=='__main__':
     main()
