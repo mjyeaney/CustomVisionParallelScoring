@@ -17,6 +17,8 @@ class CoordinateOperations:
                 _, index, tileRow, tileCol, angle = score["name"].split('.')[0].split('_')
                 x1, y1, x2, y2 = box
 
+                logging.info(f"Mapping box {x1},{y1},{x2},{y2} in row {tileRow}, col {tileCol}...")
+
                 # Translate box coords to R2 using TranslateR4toR2
                 x, y = self.TranslateR4toR2(
                     tileWidth, 
@@ -28,6 +30,8 @@ class CoordinateOperations:
                 )
                 width = x2 - x1
                 height = y2 - y1
+
+                logging.info(f"New coordinates: {x}, {y} with width = {width} and height = {height}")
 
                 # Add box to output list
                 results.append((x, y, x + width, y + height))

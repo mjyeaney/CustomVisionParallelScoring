@@ -85,5 +85,6 @@ class DefaultImageTiler:
                 k +=1
                 tileCol += 1
             
+            tileCol = 0
             tileRow += 1
     
