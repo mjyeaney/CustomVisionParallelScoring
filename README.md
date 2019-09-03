@@ -6,7 +6,7 @@ In order to work around these current limitations, a sample project will be deve
 
 This approach should work with both classification and object detection methods, making the code reusable for a variety of scenarios.
 
-## Design Approach
+## Approach
 
 The concept that is leveraged in this repo is the idea of _image segmentation_, where an image is segmented into multiple, smaller parts each of which is a uniformly sized part of the larger, high-resolution source image. Using this idea of segementing, features which may be obscured within the original high-resolution image are thereby augmented within the individual tiles since the relative size of the feature is now much larger (compared to the tile size) - specifically, feature augmentation follows linearly as the number of tiles increases. This augmentation allows easier identification within the model, yielding higher accuracy for features which would normally be much too small:
 
@@ -25,6 +25,13 @@ Once the images are segmented, they can be used to build a Custom Vision model u
 Regardless of the method used to build the model, the final step will be to leverage the scoring API of the model in order to identify/classify a source image. The process of scoring an original source images begines much the same way as outlined above, where the source image is segmented into smaller tiles. Each of these tiles is then submitted (in parallel) to the Custom Vision scoring API endpoint, which returns classification and/or object identification bounding box details.
 
 Note, however, that we now have bounding box information that is relative only to a *single tile*. The final steps is to re-map these coordinates (effectively from R<sup>4</sup> space to R<sup>2</sup> space) so we can "re-map" the boxes back onto the original source image. Once this is done, we can draw these re-mapped boxes onto the source image for display.
+
+## Architecture and Design
+
+Designed as a pre- and post-processing utility, the code is intended to be used from the command line to both generate images used for building / training models, as well as orchestrating parallel calls to those models to score a source image. Details of the application architecture can be found at the links below:
+
+* [Module design and descriptions](docs/module-design.md)
+* Data exchange and temporary file use
 
 ## Installation & Setup
 
