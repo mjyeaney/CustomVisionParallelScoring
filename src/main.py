@@ -96,4 +96,7 @@ def main():
     tiler.Cleanup(args.tilePath)
 
 if __name__=='__main__':
-    main()
+    try:
+        main()
+    except Exception as e:
+        logging.error(f"{e}")

@@ -6,7 +6,7 @@ class ImageWithBoundingBoxes:
     Draws a final image with boxes overlayed on it.
     """
     COLOR = "#ffff00"
-    BORDER_WIDTH = 3
+    BORDER_WIDTH = 4
 
     def Write(self, originalSource, boundingBoxes, outputPath):
         """
