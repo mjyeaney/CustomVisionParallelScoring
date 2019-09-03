@@ -2,6 +2,8 @@
 
 The following diagram depicts the relationships and dependencies between the source modules:
 
+(TODO)
+
 A brief description of each module is given below:
 
 * `main.py`: Bootstrapping/entry point, command line argument parsing, and high-level workflow orchestration.

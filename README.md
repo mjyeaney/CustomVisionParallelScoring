@@ -31,7 +31,7 @@ Note, however, that we now have bounding box information that is relative only t
 Designed as a pre- and post-processing utility, the code is intended to be used from the command line to both generate images used for building / training models, as well as orchestrating parallel calls to those models to score a source image. Details of the application architecture can be found at the links below:
 
 * [Module design and descriptions](docs/module-design.md)
-* Data exchange and temporary file use
+* [Data exchange and temporary file use](docs/data-exchange.md)
 
 ## Installation & Setup
 
