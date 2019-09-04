@@ -2,47 +2,15 @@ import logging, os
 import glob
 import time
 import random
+import asyncio
 
 from datetime import timedelta
 from html.parser import HTMLParser
 from urllib.parse import urljoin, urldefrag
 from tornado import gen, httpclient, ioloop, queues
 
-base_url = "http://www.tornadoweb.org/en/stable/"
-concurrency = 5
-
-class MockScoringMethod:
-    """
-    Fake scoring API, returns a canned result for testing
-    """
-    def ScoreTiles(self, tileDirectory):
-        """
-        Reads the tiles from the specified directory, and creates some canned results to test end-to-end drawing
-        """
-
-        self.tiles = glob.glob(os.path.join(tileDirectory, "*.png"))
-        logging.info(f"Found {len(self.tiles)} tiles for scoring...")
-        
-        scores = []
-
-        for tile in self.tiles:
-            # Given a file name of tile_{index}_{rotationAngle}.png, parse out the name into pices
-            _, index, tileRow, tileCol, angle = tile.split('.')[0].split('_')
-
-            ## Create a "fake" result, but this data structure 
-            ## will be our contract to downstream systems (pull this into a class?)
-            scores.append({
-                "name": tile,
-                "score": random.random(),
-                "tileRow": int(tileRow),
-                "tileColumn": int(tileCol),
-                "boxes": [
-                    (100.0, 100.0, 200.0, 200.0),
-                    (300.0, 300.0, 350.0, 500.0)
-                ]
-            })
-        
-        return scores
+TASK_CONCURRENCY = 5
+WORK_QUEUE_TIMEOUT_SEC = 300
 
 class ParallelScoringMethod:
     """
@@ -50,45 +18,57 @@ class ParallelScoringMethod:
     """
 
     tiles = []
+    scores = []
 
-    async def get_links_from_url(self, url):
-        response = await httpclient.AsyncHTTPClient().fetch(url)
-        logging.info(f"HTTP GET: {url}, status = {response.code}")
-        html = response.body.decode(errors="ignore")
+    async def __sendApiRequest(self, tileName):
+        await asyncio.sleep(.750)
+        logging.info(f"Scoring tile {tileName}...")
+        # TODO: Make sdk call here instead - mock calls for now
+        _, index, tileRow, tileCol, angle = tileName.split('.')[0].split('_')
+        self.scores.append({
+            "name": tileName,
+            "score": random.random(),
+            "tileRow": int(tileRow),
+            "tileColumn": int(tileCol),
+            "boxes": [
+                (100.0, 100.0, 200.0, 200.0),
+                (300.0, 300.0, 350.0, 500.0)
+            ]
+        })
 
     async def __doWork(self):
         start = time.time()
         q = queues.Queue()
         fetching, fetched = [], []
 
-        async def fetch_url(current_url):
-            # logging.info(f"Fetching {current_url}...")
-            fetching.append(current_url)
-            await self.get_links_from_url(current_url)
-            fetched.append(current_url)
+        async def score(tileName):
+            fetching.append(tileName)
+            await self.__sendApiRequest(tileName)
+            fetched.append(tileName)
 
         async def worker():
-            async for url in q:
-                if url is None:
+            async for tileName in q:
+                if tileName is None:
                     return
                 try:
-                    await fetch_url(url)
+                    await score(tileName)
                 except Exception as e:
-                    logging.error(f"Exception: {e} {url}")
+                    logging.error(f"Exception: {e} {tileName}")
                 finally:
                     q.task_done()
 
+        # Enqueue each tile path/name for workers to grab
         for tile in self.tiles:
-            await q.put(base_url)
+            await q.put(tile)
 
         # Start workers, then wait for the work queue to be empty.
-        workers = gen.multi([worker() for _ in range(concurrency)])
-        await q.join(timeout=timedelta(seconds=300))
+        workers = gen.multi([worker() for _ in range(TASK_CONCURRENCY)])
+        await q.join(timeout=timedelta(seconds=WORK_QUEUE_TIMEOUT_SEC))
         assert fetching == fetched
         logging.info(f"Done in {(time.time() - start)} seconds, fetched {len(fetched)} URLs.")
 
         # Signal all the workers to exit.
-        for _ in range(concurrency):
+        for _ in range(TASK_CONCURRENCY):
             await q.put(None)
 
         # wait for workers
@@ -104,3 +84,5 @@ class ParallelScoringMethod:
 
         io_loop = ioloop.IOLoop.current()
         io_loop.run_sync(self.__doWork)
+
+        return self.scores
