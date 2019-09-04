@@ -69,4 +69,4 @@ Please feel free to submit issues and feedback in this repo - pull requests also
 [1]: https://docs.microsoft.com/en-us/azure/cognitive-services/custom-vision-service/home
 [2]: https://docs.microsoft.com/en-us/azure/cognitive-services/custom-vision-service/limits-and-quotas
 [3]: https://docs.microsoft.com/en-us/azure/cognitive-services/custom-vision-service/get-started-build-detector 
-[4]: https://docs.python.org/3.6/library/venv.html
+[4]: https://docs.python.org/3.6/library/venv.html 

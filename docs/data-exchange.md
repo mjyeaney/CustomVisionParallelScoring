@@ -1,8 +1,8 @@
 ## Data Exchange Patterns
 
-The image processing modules in this repo write intermediate iamges to the temporary location defined by the `--tilePath` command line argument. File-based data exchanged was chosen due to the simplicity of debugging, and the ability to have visibility into each step of the processing pipeline.
+The image processing modules write intermediate files/images to the temporary location defined by the `--tilePath` command line argument. File-based data exchanged was chosen due to the simplicity of debugging, and the ability to have visibility into each step of the processing pipeline.
 
-### File Naming / Encoding
+### Tile File Naming / Encoding
 
 Tile filenames encode the tile position as well as rotation inforamtion in the file name by using the following naming convention:
 

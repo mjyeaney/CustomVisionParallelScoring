@@ -2,7 +2,9 @@
 
 The following diagram depicts the relationships and dependencies between the source modules:
 
-![Module Design Image](module-design.png)
+<p align="center"> 
+    <img src="module-design.png">
+</p>
 
 A brief description of each module is given below:
 
