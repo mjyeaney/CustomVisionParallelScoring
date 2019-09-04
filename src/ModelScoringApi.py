@@ -5,8 +5,6 @@ import random
 import asyncio
 
 from datetime import timedelta
-from html.parser import HTMLParser
-from urllib.parse import urljoin, urldefrag
 from tornado import gen, httpclient, ioloop, queues
 
 TASK_CONCURRENCY = 5
