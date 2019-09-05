@@ -76,6 +76,9 @@ def main():
     coordinateOps = CoordinateOperations()
     resultsWriter = ImageWithBoundingBoxes()
 
+    # Cleanup any leftover tiles
+    tiler.Cleanup(args.tilePath)
+
     # Tile the input image
     tiler.CreateTiles(
         args.sourceImage, 
@@ -91,9 +94,9 @@ def main():
         boxes = coordinateOps.RemapBoundingBoxes(args.tileHeight, args.tileWidth, scores)
         resultFileName = os.path.join(args.outputPath, os.path.basename(args.sourceImage))
         resultsWriter.Write(args.sourceImage, boxes, resultFileName)
-    
-    # Cleanup
-    tiler.Cleanup(args.tilePath)
+
+        # Cleanup (only when training)
+        tiler.Cleanup(args.tilePath)
 
 if __name__=='__main__':
     try:

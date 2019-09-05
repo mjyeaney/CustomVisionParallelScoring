@@ -7,6 +7,9 @@ import asyncio
 from datetime import timedelta
 from tornado import gen, httpclient, ioloop, queues
 
+from azure.cognitiveservices.vision.customvision.prediction import CustomVisionPredictionClient
+
+# Async/tornado settings
 TASK_CONCURRENCY = 5
 WORK_QUEUE_TIMEOUT_SEC = 300
 
@@ -19,20 +22,38 @@ class ParallelScoringMethod:
     scores = []
 
     async def __sendApiRequest(self, tileName):
-        await asyncio.sleep(.750)
         logging.info(f"Scoring tile {tileName}...")
-        # TODO: Make sdk call here instead - mock calls for now
+
+        # Disassemble tile name so we can build results collections
         _, index, tileRow, tileCol, angle = tileName.split('.')[0].split('_')
-        self.scores.append({
-            "name": tileName,
-            "score": random.random(),
-            "tileRow": int(tileRow),
-            "tileColumn": int(tileCol),
-            "boxes": [
-                (100.0, 100.0, 200.0, 200.0),
-                (300.0, 300.0, 350.0, 500.0)
-            ]
-        })
+  
+        # Now there is a trained endpoint that can be used to make a prediction
+        predictor = CustomVisionPredictionClient(prediction_key, endpoint=SERVICE_ENDPOINT)
+
+        # Open the sample image and get back the prediction results.
+        with open(tileName, mode="rb") as test_data:
+            results = predictor.detect_image(project_id, publish_iteration_name, test_data)
+
+        # Capture the results.    
+        for prediction in results.predictions:
+            score = prediction.probability * 100
+            x1 = prediction.bounding_box.left * 800
+            y1 = prediction.bounding_box.top * 600
+            x2 = x1 + (prediction.bounding_box.width * 800)
+            y2 = y1 + (prediction.bounding_box.height * 600)
+
+            if (score > scoring_threshold):
+                logging.info(f"Found box at ({x1}, {y1}, {x2}, {y2}) with probability {score}")
+        
+                self.scores.append({
+                    "name": tileName,
+                    "score": score,
+                    "tileRow": int(tileRow),
+                    "tileColumn": int(tileCol),
+                    "boxes": [
+                        (x1, y1, x2, y2)
+                    ]
+                })
 
     async def __doWork(self):
         start = time.time()
