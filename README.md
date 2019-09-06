@@ -41,6 +41,22 @@ This project was developed / tested using Python 3.6.8 along with Pylint3 1.8.3 
 
 Following successful installation, unit tests can be run using the `run-tests.sh` script to verify correct operation.
 
+## Configuration
+
+This project leverages `configparser` for basic configuration settings support. In order to run the utility, you will need to drop a file named `settings.ini` at the root location where you execute from that contains the following sections / keys:
+
+[UtilityDefaults]
+BoundingBoxScoreThreshold = 30
+
+[CustomVisionService]
+ServiceEndpoint = 
+PredictionKey = 
+PredictionResourceId = 
+PublishIterationName = 
+ProjectId = 
+
+The keys under the `CustomVisionService` section can be retrieved from you Custom Vision prediction project.
+
 ## Usage
 
 To create a set of training tiles, the basic use will be:
