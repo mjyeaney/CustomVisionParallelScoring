@@ -3,23 +3,40 @@ import glob
 import time
 import random
 import asyncio
+import configparser
 
 from datetime import timedelta
 from tornado import gen, httpclient, ioloop, queues
-
 from azure.cognitiveservices.vision.customvision.prediction import CustomVisionPredictionClient
 
 # Async/tornado settings
 TASK_CONCURRENCY = 5
 WORK_QUEUE_TIMEOUT_SEC = 300
 
-class ParallelScoringMethod:
+class ParallelScoring:
     """
     Implements scoring calls against the Custom Vision API in a parallel manner.
     """
 
-    tiles = []
-    scores = []
+    def __init__(self, tileWidth, tileHeight):
+        self.tiles = []
+        self.scores = []
+        self.tileWidth = tileWidth
+        self.tileHeight = tileHeight
+
+        # Read config section
+        config = configparser.ConfigParser();
+        config.read("./settings.ini")
+        
+        if CustomVisionService not in config:
+            raise Exception("Required configuration file section ('CustomVisionService') not found!")
+
+        section = config["CustomVisionService"]
+        self.serviceEndpoint = section["configServiceEndpoint"]
+        self.predictionKey = section["PredictionKey"]
+        self.predictionResourceId = section["PredictionResourceId"]
+        self.publishIterationName = section["PublishIterationName"]
+        self.projectId = section["ProjectId"]
 
     async def __sendApiRequest(self, tileName):
         logging.info(f"Scoring tile {tileName}...")
@@ -28,19 +45,19 @@ class ParallelScoringMethod:
         _, index, tileRow, tileCol, angle = tileName.split('.')[0].split('_')
   
         # Now there is a trained endpoint that can be used to make a prediction
-        predictor = CustomVisionPredictionClient(prediction_key, endpoint=SERVICE_ENDPOINT)
+        predictor = CustomVisionPredictionClient(self.predictionKey, endpoint=self.serviceEndpoint)
 
         # Open the sample image and get back the prediction results.
         with open(tileName, mode="rb") as test_data:
-            results = predictor.detect_image(project_id, publish_iteration_name, test_data)
+            results = predictor.detect_image(self.projectId, self.publishIterationName, test_data)
 
         # Capture the results.    
         for prediction in results.predictions:
             score = prediction.probability * 100
-            x1 = prediction.bounding_box.left * 800
-            y1 = prediction.bounding_box.top * 600
-            x2 = x1 + (prediction.bounding_box.width * 800)
-            y2 = y1 + (prediction.bounding_box.height * 600)
+            x1 = prediction.bounding_box.left * self.tileWidth
+            y1 = prediction.bounding_box.top * self.tileHeight
+            x2 = x1 + (prediction.bounding_box.width * self.tileWidth)
+            y2 = y1 + (prediction.bounding_box.height * tileHeight)
 
             if (score > scoring_threshold):
                 logging.info(f"Found box at ({x1}, {y1}, {x2}, {y2}) with probability {score}")

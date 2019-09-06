@@ -13,7 +13,7 @@ class CoordinateOperations:
         for score in scores:
             # Each score contains a list of boxes
             for box in score["boxes"]:
-                # Given a file name of tile_{index}_{rotationAngle}.png, parse out the name into pices
+                # Given a tile file name, parse out the name into pieces
                 _, index, tileRow, tileCol, angle = score["name"].split('.')[0].split('_')
                 x1, y1, x2, y2 = box
 

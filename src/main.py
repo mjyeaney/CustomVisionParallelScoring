@@ -3,7 +3,7 @@ import logging
 import glob, os
 
 from ImageTiling import DefaultImageTiler
-from ModelScoringApi import ParallelScoringMethod
+from ModelScoring import ParallelScoring
 from BoundingBoxes import CoordinateOperations
 from ResultsWriter import ImageWithBoundingBoxes
 
@@ -71,32 +71,29 @@ def main():
             raise Exception("Missing '--outputPath' argument!!!")
 
     # Applicaiton services
-    tiler = DefaultImageTiler()
-    scoringApi = ParallelScoringMethod()
+    tiler = DefaultImageTiler(args.tilePath, args.tileHeight, args.tileWidth)
+    scoringMethod = ParallelScoring(args.tileWidth, args.tileHeight)
     coordinateOps = CoordinateOperations()
     resultsWriter = ImageWithBoundingBoxes()
 
-    # Cleanup any leftover tiles
-    tiler.Cleanup(args.tilePath)
+    # Cleanup any leftover temp files
+    tiler.Cleanup()
 
     # Tile the input image
     tiler.CreateTiles(
         args.sourceImage, 
-        args.tilePath, 
-        args.tileHeight, 
-        args.tileWidth, 
         args.train
     )
 
     # If scoring, run the scoring workflow
     if args.score:        
-        scores = scoringApi.ScoreTiles(args.tilePath)
+        scores = scoringMethod.ScoreTiles(args.tilePath)
         boxes = coordinateOps.RemapBoundingBoxes(args.tileHeight, args.tileWidth, scores)
         resultFileName = os.path.join(args.outputPath, os.path.basename(args.sourceImage))
         resultsWriter.Write(args.sourceImage, boxes, resultFileName)
 
-        # Cleanup (only when training)
-        tiler.Cleanup(args.tilePath)
+        # Cleanup (only when scoring)
+        tiler.Cleanup()
 
 if __name__=='__main__':
     try:
