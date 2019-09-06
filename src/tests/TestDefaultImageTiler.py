@@ -11,18 +11,18 @@ from ImageTiling import DefaultImageTiler
 class TestImageTiler(unittest.TestCase):
 
     def test_tileSize_validation(self):
-        tiler = DefaultImageTiler()
+        tiler = DefaultImageTiler("./samples/tiles", 670, 670)
         with self.assertRaises(Exception):
-            tiler.CreateTiles("./samples/test-1.jpg", "./samples/tiles", 670, 670, False)
+            tiler.CreateTiles("./samples/test-1.jpg", False)
     
     def test_tiling_basics(self):
-        tiler = DefaultImageTiler();
-        tiler.CreateTiles("./samples/test-1.jpg", "./samples/tiles", 600, 800, False)
+        tiler = DefaultImageTiler("./samples/tiles", 600, 800);
+        tiler.CreateTiles("./samples/test-1.jpg", False)
         self.assertEqual(len(glob.glob("./samples/tiles/*.png")), 25)
 
     def test_tiling_permutations(self):
-        tiler = DefaultImageTiler();
-        tiler.CreateTiles("./samples/test-1.jpg", "./samples/tiles", 600, 800, True)
+        tiler = DefaultImageTiler("./samples/tiles", 600, 800);
+        tiler.CreateTiles("./samples/test-1.jpg", True)
         self.assertEqual(len(glob.glob("./samples/tiles/*.png")), 100)
 
     def tearDown(self):

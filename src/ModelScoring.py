@@ -28,15 +28,21 @@ class ParallelScoring:
         config = configparser.ConfigParser();
         config.read("./settings.ini")
         
-        if CustomVisionService not in config:
+        if "CustomVisionService" not in config:
             raise Exception("Required configuration file section ('CustomVisionService') not found!")
+    
+        if "UtilityDefaults" not in config:
+            raise Exception("Required configuration file section ('UtilityDefaults') not found!")
 
-        section = config["CustomVisionService"]
-        self.serviceEndpoint = section["configServiceEndpoint"]
-        self.predictionKey = section["PredictionKey"]
-        self.predictionResourceId = section["PredictionResourceId"]
-        self.publishIterationName = section["PublishIterationName"]
-        self.projectId = section["ProjectId"]
+        customVisionSection = config["CustomVisionService"]
+        self.serviceEndpoint = customVisionSection["ServiceEndpoint"]
+        self.predictionKey = customVisionSection["PredictionKey"]
+        self.predictionResourceId = customVisionSection["PredictionResourceId"]
+        self.publishIterationName = customVisionSection["PublishIterationName"]
+        self.projectId = customVisionSection["ProjectId"]
+
+        utilitySection = config["UtilityDefaults"]
+        self.boundingBoxScoreThreshold = float(utilitySection["BoundingBoxScoreThreshold"])
 
     async def __sendApiRequest(self, tileName):
         logging.info(f"Scoring tile {tileName}...")
@@ -57,9 +63,9 @@ class ParallelScoring:
             x1 = prediction.bounding_box.left * self.tileWidth
             y1 = prediction.bounding_box.top * self.tileHeight
             x2 = x1 + (prediction.bounding_box.width * self.tileWidth)
-            y2 = y1 + (prediction.bounding_box.height * tileHeight)
+            y2 = y1 + (prediction.bounding_box.height * self.tileHeight)
 
-            if (score > scoring_threshold):
+            if (score > self.boundingBoxScoreThreshold):
                 logging.info(f"Found box at ({x1}, {y1}, {x2}, {y2}) with probability {score}")
         
                 self.scores.append({
