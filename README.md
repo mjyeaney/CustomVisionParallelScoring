@@ -45,6 +45,7 @@ Following successful installation, unit tests can be run using the `run-tests.sh
 
 This project leverages `configparser` for basic configuration settings support. In order to run the utility, you will need to drop a file named `settings.ini` at the root location where you execute from that contains the following sections / keys:
 
+```
 [UtilityDefaults]
 BoundingBoxScoreThreshold = 30
 
@@ -54,6 +55,7 @@ PredictionKey =
 PredictionResourceId = 
 PublishIterationName = 
 ProjectId = 
+```
 
 The keys under the `CustomVisionService` section can be retrieved from you Custom Vision prediction project.
 
