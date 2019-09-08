@@ -1,6 +1,8 @@
 import os, glob, logging
 from PIL import Image, ImageFilter
 
+logger = logging.getLogger("ImageTiling")
+
 class DefaultImageTiler:
     """
     Basic image tiling support. Breaks down the source image into a number of tiles each of which 
@@ -14,30 +16,30 @@ class DefaultImageTiler:
 
     def __writeImageFile(self, image, writePath):
         try:
-            logging.info(f"Writing tile: {writePath}")
+            logger.info(f"Writing tile: {writePath}")
             image.save(writePath, compress_level=0)
         except:
-            logging.error(f"Error while writing {writePath}")
+            logger.error(f"Error while writing {writePath}")
             pass
     
     def __validateTileSize(self, sourceHeight, sourceWidth):
         if (sourceHeight % self.tileHeight != 0):
             msg = f"Specified tile height {self.tileHeight} does not evenly divide source image {sourceHeight}.";
-            logging.error(msg)
+            logger.error(msg)
             raise Exception(msg)
         
         if (sourceWidth % self.tileWidth != 0):
             msg = f"Specified tile width {self.tileWidth} does not evenly divide source image {sourceWidth}.";
-            logging.error(msg)
+            logger.error(msg)
             raise Exception(msg)
     
     def Cleanup(self):
         """
         Cleans up temporary tile images that were created.
         """
-        logging.info("Removing tiles...")
+        logger.info("Removing tiles...")
         filesToRemove = glob.glob(os.path.join(self.tilePath, "*.png"))
-        logging.info(f"Found {len(filesToRemove)} tiles...")
+        logger.info(f"Found {len(filesToRemove)} tiles...")
         for f in filesToRemove:
             os.remove(f)
 
@@ -52,7 +54,7 @@ class DefaultImageTiler:
         tileCol = 0
         im = Image.open(sourceImagePath)
         imgwidth, imgheight = im.size
-        logging.info(f"Source image info: width={imgwidth}, height={imgheight}, mode={im.mode}")
+        logger.info(f"Source image info: width={imgwidth}, height={imgheight}, mode={im.mode}")
 
         # Validate that stil size evenly divides source image
         self.__validateTileSize(imgheight, imgwidth)
@@ -65,7 +67,7 @@ class DefaultImageTiler:
                 # Crop image, change colorspace, etc.
                 cropped = im.crop(box)
 
-                # Few other options to test: B&W and Edge enhanced
+                # Few other options we could test: B&W and Edge enhanced
                 # cropped = cropped.convert(mode="L") # B&w...does it help?
                 # cropped = cropped.filter(ImageFilter.EDGE_ENHANCE) # Edge enhance
 

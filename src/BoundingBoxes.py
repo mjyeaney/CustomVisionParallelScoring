@@ -1,5 +1,7 @@
 import logging
 
+logger = logging.getLogger("BoundingBoxes")
+
 class CoordinateOperations:
     def RemapBoundingBoxes(self, tileHeight, tileWidth, scores):
         """
@@ -17,7 +19,7 @@ class CoordinateOperations:
                 _, index, tileRow, tileCol, angle = score["name"].split('.')[0].split('_')
                 x1, y1, x2, y2 = box
 
-                logging.info(f"Mapping box {x1},{y1},{x2},{y2} in row {tileRow}, col {tileCol}...")
+                logger.info(f"Mapping box {x1},{y1},{x2},{y2} in row {tileRow}, col {tileCol}...")
 
                 # Translate box coords to R2 using TranslateR4toR2
                 x, y = self.TranslateR4toR2(
@@ -31,7 +33,7 @@ class CoordinateOperations:
                 width = x2 - x1
                 height = y2 - y1
 
-                logging.info(f"New coordinates: {x}, {y} with width = {width} and height = {height}")
+                logger.info(f"New coordinates: {x}, {y} with width = {width} and height = {height}")
 
                 # Add box to output list
                 results.append((x, y, x + width, y + height))
@@ -49,32 +51,32 @@ class CoordinateOperations:
         # Validate range of params is correct
         if (tile_width < 0): 
             msg = f"Specified tile width {tile_width} cannot be negative";
-            logging.error(msg)
+            logger.error(msg)
             raise Exception(msg)
         
         if (tile_height < 0): 
             msg = f"Specified tile height {tile_height} cannot be negative";
-            logging.error(msg)
+            logger.error(msg)
             raise Exception(msg)
         
         if (tile_col < 0): 
             msg = f"Specified tile column {tile_col} cannot be negative";
-            logging.error(msg)
+            logger.error(msg)
             raise Exception(msg)
         
         if (tile_row < 0): 
             msg = f"Specified tile row {tile_row} cannot be negative";
-            logging.error(msg)
+            logger.error(msg)
             raise Exception(msg)
 
         if (r4_x < 0): 
             msg = f"Specified R4 x value {r4_x} cannot be negative";
-            logging.error(msg)
+            logger.error(msg)
             raise Exception(msg)
         
         if (r4_y < 0): 
             msg = f"Specified R4 y value {r4_y} cannot be negative";
-            logging.error(msg)
+            logger.error(msg)
             raise Exception(msg)
         
         # Tranlate the coordinate system from R4 to R2

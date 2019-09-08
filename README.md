@@ -43,7 +43,7 @@ Following successful installation, unit tests can be run using the `run-tests.sh
 
 ## Configuration
 
-This project leverages `configparser` for basic configuration settings support. In order to run the utility, you will need to drop a file named `settings.ini` at the root location where you execute from that contains the following sections / keys:
+This project leverages `configparser` for basic configuration settings support. In order to run the utility, you will need to drop a file named `settings.cfg` at the root location where you execute from that contains the following sections / keys:
 
 ```
 [UtilityDefaults]

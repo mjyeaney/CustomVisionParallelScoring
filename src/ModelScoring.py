@@ -13,6 +13,8 @@ from azure.cognitiveservices.vision.customvision.prediction import CustomVisionP
 TASK_CONCURRENCY = 5
 WORK_QUEUE_TIMEOUT_SEC = 300
 
+logger = logging.getLogger("ModelScoring")
+
 class ParallelScoring:
     """
     Implements scoring calls against the Custom Vision API in a parallel manner.
@@ -26,7 +28,7 @@ class ParallelScoring:
 
         # Read config section
         config = configparser.ConfigParser();
-        config.read("./settings.ini")
+        config.read("./settings.cfg")
         
         if "CustomVisionService" not in config:
             raise Exception("Required configuration file section ('CustomVisionService') not found!")
@@ -45,7 +47,7 @@ class ParallelScoring:
         self.boundingBoxScoreThreshold = float(utilitySection["BoundingBoxScoreThreshold"])
 
     async def __sendApiRequest(self, tileName):
-        logging.info(f"Scoring tile {tileName}...")
+        logger.info(f"Scoring tile {tileName}...")
 
         # Disassemble tile name so we can build results collections
         _, index, tileRow, tileCol, angle = tileName.split('.')[0].split('_')
@@ -55,6 +57,8 @@ class ParallelScoring:
 
         # Open the sample image and get back the prediction results.
         with open(tileName, mode="rb") as test_data:
+            # response = await httpclient.AsyncHTTPClient().fetch(method="PUT", body=test_data, )
+            # html = response.body.decode(errors="ignore")
             results = predictor.detect_image(self.projectId, self.publishIterationName, test_data)
 
         # Capture the results.    
@@ -66,7 +70,7 @@ class ParallelScoring:
             y2 = y1 + (prediction.bounding_box.height * self.tileHeight)
 
             if (score > self.boundingBoxScoreThreshold):
-                logging.info(f"Found box at ({x1}, {y1}, {x2}, {y2}) with probability {score}")
+                logger.info(f"Found box at ({x1}, {y1}, {x2}, {y2}) with probability {score}")
         
                 self.scores.append({
                     "name": tileName,
@@ -77,6 +81,8 @@ class ParallelScoring:
                         (x1, y1, x2, y2)
                     ]
                 })
+            else:
+                logger.info(f"**Skipping box with threshold {score}**")
 
     async def __doWork(self):
         start = time.time()
@@ -95,7 +101,7 @@ class ParallelScoring:
                 try:
                     await score(tileName)
                 except Exception as e:
-                    logging.error(f"Exception: {e} {tileName}")
+                    logger.error(f"Exception: {e} {tileName}")
                 finally:
                     q.task_done()
 
@@ -107,7 +113,7 @@ class ParallelScoring:
         workers = gen.multi([worker() for _ in range(TASK_CONCURRENCY)])
         await q.join(timeout=timedelta(seconds=WORK_QUEUE_TIMEOUT_SEC))
         assert fetching == fetched
-        logging.info(f"Done in {(time.time() - start)} seconds, fetched {len(fetched)} URLs.")
+        logger.info(f"Done in {(time.time() - start)} seconds, fetched {len(fetched)} URLs.")
 
         # Signal all the workers to exit.
         for _ in range(TASK_CONCURRENCY):
@@ -122,7 +128,7 @@ class ParallelScoring:
         """
 
         self.tiles = glob.glob(os.path.join(tileDirectory, "*.png"))
-        logging.info(f"Found {len(self.tiles)} tiles for scoring...")
+        logger.info(f"Found {len(self.tiles)} tiles for scoring...")
 
         io_loop = ioloop.IOLoop.current()
         io_loop.run_sync(self.__doWork)

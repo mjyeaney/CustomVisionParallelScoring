@@ -7,4 +7,4 @@ lib64
 share
 log.txt
 *.log
-settings.ini
+settings.cfg
