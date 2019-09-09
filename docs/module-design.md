@@ -9,6 +9,7 @@ The following diagram depicts the relationships and dependencies between the sou
 A brief description of each module is given below:
 
 * `main.py`: Bootstrapping/entry point, command line argument parsing, and high-level workflow orchestration.
+* `Settings.py`: Handles reading of the utility configuration values from *.cfg file(s).
 * `ImageTiling.py`: Handles tiling of the source input image into a set of smaller tiles. These tiles are written to a temporary location defined by the `--tilePath` command line argument.
 * `ModelScoring.py`: Handles making calls to the CustomVision API service in a non-blocking, parallel manner leveraging Tornado/asyncio coroutines.
 * `BoundingBoxes.py`: This module handles mapping of the bounding box coordinates from tile space back to the original source image.
