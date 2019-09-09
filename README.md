@@ -48,6 +48,7 @@ This project leverages `configparser` for basic configuration settings support. 
 ```
 [UtilityDefaults]
 BoundingBoxScoreThreshold = 30
+TempFilePath = samples/temp
 
 [CustomVisionService]
 ServiceEndpoint = 
@@ -63,15 +64,15 @@ The keys under the `CustomVisionService` section can be retrieved from you Custo
 
 To create a set of training tiles, the basic use will be:
 
-`python src/main.py -t --sourceImage xxx --tilePath xxx --tileWidth xxx --tileHeight xxx`
+`python src/main.py -t --sourceImage xxx --tileWidth xxx --tileHeight xxx`
 
 So, for example, to tile a source image named `test-image.jpg`, save the tiles at `./tiles`, and have each tile be 800x600, use the following (note the `-t` flag):
 
-`python src/main.py -t --sourceImage test-image.jpg --tilePath tiles/ --tileWidth 800 --tileHeight 600`
+`python src/main.py -t --sourceImage test-image.jpg --tileWidth 800 --tileHeight 600`
 
 To run scoring against a source image, the usage is (note the `-s` flag):
 
-`python src/main.py -s --sourceImage xxx --tilePath xxx --tileWidth xxx --tileHeight xxx --outputPath xxx`
+`python src/main.py -s --sourceImage xxx --tileWidth xxx --tileHeight xxx --outputPath xxx`
 
 This will write the final output image to the path defined by the `--outputPath` parameter.
 

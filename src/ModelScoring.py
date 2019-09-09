@@ -20,31 +20,20 @@ class ParallelScoring:
     Implements scoring calls against the Custom Vision API in a parallel manner.
     """
 
-    def __init__(self, tileWidth, tileHeight):
+    def __init__(self, settings, tileWidth, tileHeight):
         self.tiles = []
         self.scores = []
         self.tileWidth = tileWidth
         self.tileHeight = tileHeight
+        self.tempFilePath = settings.tempFilePath
 
-        # Read config section
-        config = configparser.ConfigParser();
-        config.read("./settings.cfg")
-        
-        if "CustomVisionService" not in config:
-            raise Exception("Required configuration file section ('CustomVisionService') not found!")
-    
-        if "UtilityDefaults" not in config:
-            raise Exception("Required configuration file section ('UtilityDefaults') not found!")
-
-        customVisionSection = config["CustomVisionService"]
-        self.serviceEndpoint = customVisionSection["ServiceEndpoint"]
-        self.predictionKey = customVisionSection["PredictionKey"]
-        self.predictionResourceId = customVisionSection["PredictionResourceId"]
-        self.publishIterationName = customVisionSection["PublishIterationName"]
-        self.projectId = customVisionSection["ProjectId"]
-
-        utilitySection = config["UtilityDefaults"]
-        self.boundingBoxScoreThreshold = float(utilitySection["BoundingBoxScoreThreshold"])
+        # Grab configuration settings
+        self.serviceEndpoint = settings.serviceEndpoint
+        self.predictionKey = settings.predictionKey
+        self.predictionResourceId = settings.predictionResourceId
+        self.publishIterationName = settings.publishIterationName
+        self.projectId = settings.projectId
+        self.boundingBoxScoreThreshold = settings.boundingBoxScoreThreshold
 
     async def __sendApiRequest(self, tileName):
         logger.info(f"Scoring tile {tileName}...")
@@ -122,12 +111,12 @@ class ParallelScoring:
         # wait for workers
         await workers
 
-    def ScoreTiles(self, tileDirectory):
+    def ScoreTiles(self):
         """
         Reads the tiles from the specified directory, and sends those to the scoring API endpoint in parallel.
         """
 
-        self.tiles = glob.glob(os.path.join(tileDirectory, "*.png"))
+        self.tiles = glob.glob(os.path.join(self.tempFilePath, "*.png"))
         logger.info(f"Found {len(self.tiles)} tiles for scoring...")
 
         io_loop = ioloop.IOLoop.current()

@@ -9,8 +9,8 @@ class DefaultImageTiler:
     has a defined size. Tiles MUST evenly divide the width and height of the source image.
     """
 
-    def __init__(self, tilePath, tileHeight, tileWidth):
-        self.tilePath = tilePath
+    def __init__(self, settings, tileHeight, tileWidth):
+        self.tempFilePath = settings.tempFilePath
         self.tileHeight = tileHeight
         self.tileWidth = tileWidth
 
@@ -38,7 +38,7 @@ class DefaultImageTiler:
         Cleans up temporary tile images that were created.
         """
         logger.info("Removing tiles...")
-        filesToRemove = glob.glob(os.path.join(self.tilePath, "*.png"))
+        filesToRemove = glob.glob(os.path.join(self.tempFilePath, "*.png"))
         logger.info(f"Found {len(filesToRemove)} tiles...")
         for f in filesToRemove:
             os.remove(f)
@@ -72,7 +72,7 @@ class DefaultImageTiler:
                 # cropped = cropped.filter(ImageFilter.EDGE_ENHANCE) # Edge enhance
 
                 # Write tile images - note we're encoding tiling infomration into the filenames
-                writePath = os.path.join(self.tilePath, f"tile_{k}_{tileRow}_{tileCol}_0.png")
+                writePath = os.path.join(self.tempFilePath, f"tile_{k}_{tileRow}_{tileCol}_0.png")
                 self.__writeImageFile(cropped, writePath)            
 
                 # Generate permutations if required (3 per original image, yielding 4 samples per tile)
@@ -81,11 +81,11 @@ class DefaultImageTiler:
                     cropped_r180 = cropped.rotate(180)
                     cropped_r270 = cropped.rotate(270, expand=True)
 
-                    writePath = os.path.join(self.tilePath, f"tile_{k}_{tileRow}_{tileCol}_90.png")
+                    writePath = os.path.join(self.tempFilePath, f"tile_{k}_{tileRow}_{tileCol}_90.png")
                     self.__writeImageFile(cropped_r90, writePath)
-                    writePath = os.path.join(self.tilePath, f"tile_{k}_{tileRow}_{tileCol}_180.png")
+                    writePath = os.path.join(self.tempFilePath, f"tile_{k}_{tileRow}_{tileCol}_180.png")
                     self.__writeImageFile(cropped_r180, writePath)
-                    writePath = os.path.join(self.tilePath, f"tile_{k}_{tileRow}_{tileCol}_270.png")
+                    writePath = os.path.join(self.tempFilePath, f"tile_{k}_{tileRow}_{tileCol}_270.png")
                     self.__writeImageFile(cropped_r270, writePath)
                 
                 # Increment counters

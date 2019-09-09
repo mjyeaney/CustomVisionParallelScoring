@@ -6,6 +6,7 @@ from ImageTiling import DefaultImageTiler
 from ModelScoring import ParallelScoring
 from BoundingBoxes import CoordinateOperations
 from ResultsWriter import ImageWithBoundingBoxes
+from Settings import ConfigSettings
 
 LOG_FORMAT="%(asctime)s: %(name)s - %(levelname)s - %(message)s"
 logging.basicConfig(format=LOG_FORMAT, level=logging.INFO)
@@ -33,11 +34,6 @@ def main():
         type=str
     )
     parser.add_argument(
-        "--tilePath", 
-        help="The output path to save the tiles to.", 
-        type=str
-    )
-    parser.add_argument(
         "--tileWidth", 
         help="The width (in pixels) of each output tile", 
         type=int
@@ -59,10 +55,9 @@ def main():
     logging.info(f"train = {args.train}")
     logging.info(f"score = {args.score}")
     logging.info(f"sourceImage = {args.sourceImage}")
-    logging.info(f"tilePath = {args.tilePath}")
     logging.info(f"tileWidth = {args.tileWidth}") 
     logging.info(f"tileHeight = {args.tileHeight}")
-    logging.info(f"outputPath = {args.outputPath}") 
+    logging.info(f"outputPath = {args.outputPath}")
 
     # Quick validation check
     if args.score:
@@ -71,10 +66,14 @@ def main():
             raise Exception("Missing '--outputPath' argument!!!")
 
     # Applicaiton services
-    tiler = DefaultImageTiler(args.tilePath, args.tileHeight, args.tileWidth)
-    scoringMethod = ParallelScoring(args.tileWidth, args.tileHeight)
+    settings = ConfigSettings(os.path.abspath("./settings.cfg"))
+    tiler = DefaultImageTiler(settings, args.tileHeight, args.tileWidth)
+    scoringMethod = ParallelScoring(settings, args.tileWidth, args.tileHeight)
     coordinateOps = CoordinateOperations()
     resultsWriter = ImageWithBoundingBoxes()
+
+    # Verify / dump settings
+    settings.DumpSettingsToLog()
 
     # Cleanup any leftover temp files
     tiler.Cleanup()
@@ -87,7 +86,7 @@ def main():
 
     # If scoring, run the scoring workflow
     if args.score:        
-        scores = scoringMethod.ScoreTiles(args.tilePath)
+        scores = scoringMethod.ScoreTiles()
         boxes = coordinateOps.RemapBoundingBoxes(args.tileHeight, args.tileWidth, scores)
         resultFileName = os.path.join(args.outputPath, os.path.basename(args.sourceImage))
         resultsWriter.Write(args.sourceImage, boxes, resultFileName)
