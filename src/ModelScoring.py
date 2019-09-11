@@ -9,8 +9,6 @@ import json
 from datetime import timedelta
 from tornado import gen, httpclient, ioloop, queues
 
-from azure.cognitiveservices.vision.customvision.prediction import CustomVisionPredictionClient
-
 # Async/tornado settings
 TASK_CONCURRENCY = 8
 WORK_QUEUE_TIMEOUT_SEC = 300
