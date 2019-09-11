@@ -46,7 +46,7 @@ class ParallelScoring:
 
         # Open the sample image and get back the prediction results.
         with open(tileName, mode="rb") as test_data:
-            # response = await httpclient.AsyncHTTPClient().fetch(method="PUT", body=test_data, )
+            logger.info(await httpclient.AsyncHTTPClient().fetch(method="PUT", body=test_data, request=self.serviceEndpoint).body)
             # html = response.body.decode(errors="ignore")
             results = predictor.detect_image(self.projectId, self.publishIterationName, test_data)
 
