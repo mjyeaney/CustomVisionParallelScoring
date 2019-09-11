@@ -88,6 +88,8 @@ def main():
     if args.score:        
         scores = scoringMethod.ScoreTiles()
         boxes = coordinateOps.RemapBoundingBoxes(args.tileHeight, args.tileWidth, scores)
+
+        # The result / output file is named the same as the source image, but in the outputPath dir
         resultFileName = os.path.join(args.outputPath, os.path.basename(args.sourceImage))
         resultsWriter.Write(args.sourceImage, boxes, resultFileName)
 
