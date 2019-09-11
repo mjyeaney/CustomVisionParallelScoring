@@ -4,13 +4,15 @@ import time
 import random
 import asyncio
 import configparser
+import json
 
 from datetime import timedelta
 from tornado import gen, httpclient, ioloop, queues
+
 from azure.cognitiveservices.vision.customvision.prediction import CustomVisionPredictionClient
 
 # Async/tornado settings
-TASK_CONCURRENCY = 5
+TASK_CONCURRENCY = 8
 WORK_QUEUE_TIMEOUT_SEC = 300
 
 logger = logging.getLogger("ModelScoring")
@@ -40,23 +42,31 @@ class ParallelScoring:
 
         # Disassemble tile name so we can build results collections
         _, index, tileRow, tileCol, angle = tileName.split('.')[0].split('_')
-  
-        # Now there is a trained endpoint that can be used to make a prediction
-        predictor = CustomVisionPredictionClient(self.predictionKey, endpoint=self.serviceEndpoint)
+
+        # Build API URL: https://{endpoint}/customvision/v3.0/Prediction/{projectId}/detect/iterations/{publishedName}/url/nostore[?application]
+        apiUrl = f"{self.serviceEndpoint}customvision/v3.0/Prediction/{self.projectId}/detect/iterations/{self.publishIterationName}/image/nostore"
 
         # Open the sample image and get back the prediction results.
         with open(tileName, mode="rb") as test_data:
-            logger.info(await httpclient.AsyncHTTPClient().fetch(method="PUT", body=test_data, request=self.serviceEndpoint).body)
-            # html = response.body.decode(errors="ignore")
-            results = predictor.detect_image(self.projectId, self.publishIterationName, test_data)
+            response = await httpclient.AsyncHTTPClient().fetch(
+                method="POST", 
+                body=test_data.read(), 
+                request=apiUrl, 
+                headers={
+                    "Prediction-Key": self.predictionKey, 
+                    "Content-Type": "application/octet-stream"
+                },
+                raise_error=False
+            )
+            results = json.loads(response.body.decode())
 
         # Capture the results.    
-        for prediction in results.predictions:
-            score = prediction.probability * 100
-            x1 = prediction.bounding_box.left * self.tileWidth
-            y1 = prediction.bounding_box.top * self.tileHeight
-            x2 = x1 + (prediction.bounding_box.width * self.tileWidth)
-            y2 = y1 + (prediction.bounding_box.height * self.tileHeight)
+        for prediction in results["predictions"]:
+            score = prediction["probability"] * 100
+            x1 = prediction["boundingBox"]["left"] * self.tileWidth
+            y1 = prediction["boundingBox"]["top"] * self.tileHeight
+            x2 = x1 + (prediction["boundingBox"]["width"] * self.tileWidth)
+            y2 = y1 + (prediction["boundingBox"]["height"] * self.tileHeight)
 
             if (score > self.boundingBoxScoreThreshold):
                 logger.info(f"Found box at ({x1}, {y1}, {x2}, {y2}) with probability {score}")
@@ -101,8 +111,7 @@ class ParallelScoring:
         # Start workers, then wait for the work queue to be empty.
         workers = gen.multi([worker() for _ in range(TASK_CONCURRENCY)])
         await q.join(timeout=timedelta(seconds=WORK_QUEUE_TIMEOUT_SEC))
-        assert fetching == fetched
-        logger.info(f"Done in {(time.time() - start)} seconds, fetched {len(fetched)} URLs.")
+        logger.info(f"Done in {(time.time() - start)} seconds, scored {len(fetched)} tiles...")
 
         # Signal all the workers to exit.
         for _ in range(TASK_CONCURRENCY):
