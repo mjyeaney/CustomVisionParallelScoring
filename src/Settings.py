@@ -1,5 +1,6 @@
 import configparser
 import logging
+import os
 
 logger = logging.getLogger("Settings")
 
@@ -21,6 +22,9 @@ class ConfigSettings:
         if file is None:
             logger.info("No conig file specified - creating default config.")
         else:
+            if os.path.exists(file) is False:
+                raise FileNotFoundError()
+
             # Read config section
             logger.info(f"Reading configuration settings from file {file}...")
             config = configparser.ConfigParser();
