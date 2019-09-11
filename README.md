@@ -26,6 +26,19 @@ Regardless of the method used to build the model, the final step will be to leve
 
 Note, however, that we now have bounding box information that is relative only to a *single tile*. The final steps is to re-map these coordinates (effectively from R<sup>4</sup> space to R<sup>2</sup> space since the tile boxes are identified not only by a local _(X<sub>1</sub>, Y<sub>1</sub>, X<sub>2</sub>, Y<sub>2</sub>)_ coordinate tuple, but also the row and column the tile belongs to, denoted _T<sub>r</sub>_ and _T<sub>c</sub>_) so we can "re-map" the boxes back onto the original source image. Once this is done, we can draw these re-mapped boxes onto the source image for display.
 
+## Parallel Scoring
+
+Since we are now breaking large images into smaller tiles, there is now the problem of how to handle making multiple requests against the Custom Vision preduction API in a time-efficient manner. To handle this, we are leveraging Python asyncIo and Tornado to make non-blocking requests in a parallel manner. This drastically reduces the time to score larger images, and makes the approach more user-friendly when integrated into applications.
+
+The are 2 parameters that control the concurrent behavior of the ModelScoring engine. These parameters are shown below:
+
+```
+TASK_CONCURRENCY = 8
+WORK_QUEUE_TIMEOUT_SEC = 300
+```
+
+While these are hard-coded values, they can be found/changed in the `src/ModelScoring.py` file.
+
 ## Architecture and Design
 
 Designed as a pre- and post-processing utility, the code is intended to be used from the command line to both generate images used for building / training models, as well as orchestrating parallel calls to those models to score a source image. Details of the application architecture can be found at the links below:
