@@ -39,6 +39,10 @@ WORK_QUEUE_TIMEOUT_SEC = 300
 
 While these are hard-coded values, they can be found/changed in the `src/ModelScoring.py` file.
 
+## Implication to Model Training
+
+The key difference when using this utility is that your Custom Vision models should be built and trained on the _tiles_, not the original full image (this is why the utility supports both a `training` and `scoring` mode). In this manner, the Custom Vision service has no idea that it's scoring small, large, panoramic, etc. image...it is only aware of tiles.
+
 ## Architecture and Design
 
 Designed as a pre- and post-processing utility, the code is intended to be used from the command line to both generate images used for building / training models, as well as orchestrating parallel calls to those models to score a source image. Details of the application architecture can be found at the links below:
