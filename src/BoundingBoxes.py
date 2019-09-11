@@ -49,33 +49,33 @@ class CoordinateOperations:
         """
 
         # Validate range of params is correct
-        if (tile_width < 0): 
-            msg = f"Specified tile width {tile_width} cannot be negative";
+        if (tile_width <= 0): 
+            msg = f"Specified tile width {tile_width} cannot be less than / equal to zero";
             logger.error(msg)
             raise Exception(msg)
         
-        if (tile_height < 0): 
-            msg = f"Specified tile height {tile_height} cannot be negative";
+        if (tile_height <= 0): 
+            msg = f"Specified tile height {tile_height} cannot be less than / equal to zero";
             logger.error(msg)
             raise Exception(msg)
         
         if (tile_col < 0): 
-            msg = f"Specified tile column {tile_col} cannot be negative";
+            msg = f"Specified tile column {tile_col} cannot be less than zero";
             logger.error(msg)
             raise Exception(msg)
         
         if (tile_row < 0): 
-            msg = f"Specified tile row {tile_row} cannot be negative";
+            msg = f"Specified tile row {tile_row} cannot be less than zero";
             logger.error(msg)
             raise Exception(msg)
 
         if (r4_x < 0): 
-            msg = f"Specified R4 x value {r4_x} cannot be negative";
+            msg = f"Specified R4 x value {r4_x} cannot be less than zero";
             logger.error(msg)
             raise Exception(msg)
         
         if (r4_y < 0): 
-            msg = f"Specified R4 y value {r4_y} cannot be negative";
+            msg = f"Specified R4 y value {r4_y} cannot be less than zero";
             logger.error(msg)
             raise Exception(msg)
         

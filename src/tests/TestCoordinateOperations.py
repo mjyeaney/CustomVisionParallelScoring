@@ -56,6 +56,14 @@ class TestCoordinateOperations(unittest.TestCase):
 
         with self.assertRaises(Exception):
             x, y = methods.TranslateR4toR2(500, 500, 1, 5, 100, -100)
+    
+    def test_zero_conditions(self):
+        methods = CoordinateOperations()
+        with self.assertRaises(Exception):
+            x, y = methods.TranslateR4toR2(0, 500, 0, 0, 100, 100)
+
+        with self.assertRaises(Exception):
+            x, y = methods.TranslateR4toR2(500, 0, 0, 0, 100, 100)
 
 if __name__ == '__main__':
     unittest.main()
